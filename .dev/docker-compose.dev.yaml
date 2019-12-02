@@ -1,0 +1,42 @@
+version: '3.2'
+
+services: 
+  reporting-engine:
+    image: reporting-engine
+    build:
+        context: .
+        dockerfile: development.dockerfile
+    volumes:
+        - "../.:/go/src/github.com/tokopedia/reporting-engine"
+    ports:
+        - "4321:4321"
+    depends_on:
+        - elasticsearch
+    command: ["refresh","run","-c",".dev/refresh.yaml"]
+    container_name: reporting-engine
+  elasticsearch:
+        container_name: elasticsearch
+        image: elasticsearch:6.8.5
+        command: elasticsearch -Ecluster.name=catalog -Ebootstrap.memory_lock=true -Ehttp.port=9200 -Ehttp.cors.allow-origin="*" -Ehttp.cors.enabled=true -Ehttp.cors.allow-headers=X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization -Ehttp.cors.allow-credentials=true -Expack.security.enabled=false
+        environment:
+            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
+        volumes:
+            - ../.docker/elasticdata:/usr/share/elasticsearch/data:rw
+        ports:
+            - 9200:9200
+  kibana:
+      image: kibana:6.8.5
+      container_name: kibana
+      ports:
+          - "5601:5601"
+      links:
+          - elasticsearch
+  cerebro:
+      image: lmenezes/cerebro:0.8.3
+      container_name: cerebro
+      ports:
+        - "9100:9000"

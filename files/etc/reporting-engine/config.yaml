@@ -1,0 +1,5 @@
+app:
+  port: ":4321"
+
+elastic:
+  host: "http://elasticsearch:9200"

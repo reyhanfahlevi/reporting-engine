@@ -1,0 +1,5 @@
+vendor
+.docker/elasticdata/**
+.idea/**
+
+!.gitkeep
