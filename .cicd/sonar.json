@@ -1,0 +1,4 @@
+{
+  "test_flag": "",
+  "exclusions": "**/cmd/*.go"
+}

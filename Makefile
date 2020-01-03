@@ -2,7 +2,7 @@
 
 export NOW=$(shell date +"%Y-%m-%d")
 
-PACKAGE = github.com/tokopedia/reporting-engine
+PACKAGE = github.com/tokopedia/td-report-engine
 COMMIT_HASH = $(shell git rev-parse --short HEAD 2>/dev/null)
 BUILD_DATE = $(shell date +%FT%T%z)
 ldflags = -X $(PACKAGE)/cmd.CommitHash=$(COMMIT_HASH) -X $(PACKAGE)/cmd.BuildDate=$(BUILD_DATE) -s -w

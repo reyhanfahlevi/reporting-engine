@@ -1,5 +1,6 @@
 vendor
-.docker/elasticdata/**
+.dev/elasticdata/**
 .idea/**
+http_api
 
 !.gitkeep

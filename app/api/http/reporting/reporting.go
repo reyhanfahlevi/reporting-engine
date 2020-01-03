@@ -5,8 +5,8 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/tokopedia/reporting-engine/app/api"
-	"github.com/tokopedia/reporting-engine/internal/usecase/reporting"
+	"github.com/tokopedia/td-report-engine/app/api"
+	"github.com/tokopedia/td-report-engine/internal/usecase/reporting"
 )
 
 type errorResponse struct {
@@ -47,10 +47,15 @@ func (h *Handler) HandlerStoreReport(r gin.IRoutes) gin.IRoutes {
 			return
 		}
 
+		reportType, ok := req["report_type"]
+		if !ok {
+			c.JSON(http.StatusBadRequest, errorResponse{ErrorMsg: "report type is required"})
+			return
+		}
+
 		err = h.reporting.SaveReport(c, reporting.ParamSaveReport{
-			ServiceName: req["service_name"].(string),
-			DataType:    req["data_type"].(string),
-			Data:        data,
+			ReportType: reportType.(string),
+			Data:       data,
 		})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, errorResponse{ErrorMsg: err.Error()})
@@ -68,10 +73,9 @@ func (h *Handler) HandlerGetReport(r gin.IRoutes) gin.IRoutes {
 		limit, _ := strconv.Atoi(c.Query("limit"))
 
 		param := reporting.ParamGetReports{
-			ServiceName: c.Query("service_name"),
-			DataType:    c.Query("data_type"),
-			Page:        page,
-			Limit:       limit,
+			ReportType: c.Query("report_type"),
+			Page:       page,
+			Limit:      limit,
 		}
 
 		resp, err := h.reporting.GetReports(c, param)

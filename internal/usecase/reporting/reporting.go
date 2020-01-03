@@ -2,12 +2,12 @@ package reporting
 
 import (
 	"context"
-	"fmt"
 
-	es_report "github.com/tokopedia/reporting-engine/internal/model/es-report"
+	es_report "github.com/tokopedia/td-report-engine/internal/model/es-report"
 	"github.com/uniplaces/carbon"
 )
 
+// Reporting reporting struct
 type Reporting struct {
 	esReportSvc esReportService
 }
@@ -27,13 +27,17 @@ func New(esReport esReportService) *Reporting {
 const (
 	defaultMapping = `
 	{
+		"settings" : {
+        	"index" : {
+            	"number_of_shards" : 2, 
+            	"number_of_replicas" : 0 
+			}
+		},
 		"mappings": {
-			"%s": {
-				"properties": {
-					"created_time": {
-						"type": "date",
-						"format": "yyyy-MM-dd HH:mm:ss"
-					}
+			"properties": {
+				"created_time": {
+					"type": "date",
+					"format": "yyyy-MM-dd HH:mm:ss"
 				}
 			}
 		}
@@ -42,9 +46,8 @@ const (
 
 // ParamSaveReport param for save report
 type ParamSaveReport struct {
-	ServiceName string
-	DataType    string
-	Data        map[string]interface{}
+	ReportType string
+	Data       map[string]interface{}
 }
 
 // SaveReport save report to service layer
@@ -52,10 +55,9 @@ func (r *Reporting) SaveReport(ctx context.Context, param ParamSaveReport) error
 	param.Data["created_time"] = carbon.Now().String()
 
 	report := es_report.ParamReporting{
-		Index:   param.ServiceName,
-		Type:    param.DataType,
+		Index:   param.ReportType,
 		Data:    param.Data,
-		Mapping: fmt.Sprintf(defaultMapping, param.DataType),
+		Mapping: defaultMapping,
 	}
 
 	return r.esReportSvc.StoreReport(ctx, report)
@@ -63,8 +65,7 @@ func (r *Reporting) SaveReport(ctx context.Context, param ParamSaveReport) error
 
 // ParamGetReports struct
 type ParamGetReports struct {
-	ServiceName string                 `json:"service_name"`
-	DataType    string                 `json:"data_type"`
+	ReportType  string                 `json:"report_type"`
 	Filter      map[string]interface{} `json:"filter"`
 	RangeFilter map[string]RangeFilter `json:"range_filter"`
 	Page        int                    `json:"page"`
@@ -79,6 +80,7 @@ type RangeFilter struct {
 
 // GetReportsResponse struct
 type GetReportsResponse struct {
+	ReportType string                   `json:"report_type"`
 	Data       []map[string]interface{} `json:"data"`
 	Pagination struct {
 		PrevPage  int `json:"prev_page"`
@@ -90,7 +92,9 @@ type GetReportsResponse struct {
 // GetReports get reports data
 func (r *Reporting) GetReports(ctx context.Context, param ParamGetReports) (GetReportsResponse, error) {
 	var (
-		resp GetReportsResponse
+		resp = GetReportsResponse{
+			ReportType: param.ReportType,
+		}
 	)
 
 	if param.Page <= 0 {
@@ -102,8 +106,7 @@ func (r *Reporting) GetReports(ctx context.Context, param ParamGetReports) (GetR
 	}
 
 	getParam := es_report.ParamGetReports{
-		Index:  param.ServiceName,
-		Type:   param.DataType,
+		Index:  param.ReportType,
 		Filter: param.Filter,
 	}
 

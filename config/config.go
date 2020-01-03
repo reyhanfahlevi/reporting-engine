@@ -48,13 +48,13 @@ func WithConfigFile(file string) Option {
 // getDefaultConfigFile get default config file.
 func getDefaultConfigFile() string {
 	var (
-		repoPath   = filepath.Join(os.Getenv("GOPATH"), "src/github.com/tokopedia/reporting-engine")
-		configPath = filepath.Join(repoPath, "files/etc/reporting-engine/config.yaml")
+		repoPath   = filepath.Join(os.Getenv("GOPATH"), "src/github.com/tokopedia/td-report-engine")
+		configPath = filepath.Join(repoPath, "files/etc/td-report-engine/config.yaml")
 	)
 
-	_, err := os.Stat("/etc/reporting-engine/config.yaml")
-	if os.IsExist(err) {
-		configPath = "/etc/reporting-engine/config.yaml"
+	_, err := os.Stat("/etc/td-report-engine/config.yaml")
+	if !os.IsNotExist(err) {
+		configPath = "/etc/td-report-engine/config.yaml"
 	}
 
 	return configPath

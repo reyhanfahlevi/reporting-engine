@@ -3,7 +3,7 @@ package api
 import (
 	"context"
 
-	"github.com/tokopedia/reporting-engine/internal/usecase/reporting"
+	"github.com/tokopedia/td-report-engine/internal/usecase/reporting"
 )
 
 // ReportingUseCase reporting usecase contract

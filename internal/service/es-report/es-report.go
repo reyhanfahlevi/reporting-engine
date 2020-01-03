@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/olivere/elastic"
+	"github.com/olivere/elastic/v7"
 	"github.com/pkg/errors"
-	es_report "github.com/tokopedia/reporting-engine/internal/model/es-report"
+	es_report "github.com/tokopedia/td-report-engine/internal/model/es-report"
 )
 
 // Report struct for report package
@@ -29,7 +29,7 @@ func (r *Report) StoreReport(ctx context.Context, param es_report.ParamReporting
 		return err
 	}
 
-	_, err = r.es.Index().Index(param.Index).Type(param.Type).BodyJson(param.Data).Do(ctx)
+	_, err = r.es.Index().Index(param.Index).BodyJson(param.Data).Do(ctx)
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,7 @@ func (r *Report) GetReports(ctx context.Context, param es_report.ParamGetReports
 		rangeFilter = append(rangeFilter, elastic.NewRangeQuery(k).Gte(v.From).Lte(v.To))
 	}
 
-	search := r.es.Search(param.Index).Type(param.Type).
+	search := r.es.Search(param.Index).
 		Query(
 			elastic.NewBoolQuery().
 				Filter(filter...).
@@ -75,7 +75,7 @@ func (r *Report) GetReports(ctx context.Context, param es_report.ParamGetReports
 	for _, h := range resp.Hits.Hits {
 		tmp := make(map[string]interface{})
 
-		err = json.Unmarshal(*h.Source, &tmp)
+		err = json.Unmarshal(h.Source, &tmp)
 		if err != nil {
 			continue
 		}

@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/olivere/elastic"
+	"github.com/olivere/elastic/v7"
 	"github.com/reyhanfahlevi/pkg/go/log"
-	"github.com/tokopedia/reporting-engine/app/api/http"
-	"github.com/tokopedia/reporting-engine/config"
-	esreportsvc "github.com/tokopedia/reporting-engine/internal/service/es-report"
-	ucreporting "github.com/tokopedia/reporting-engine/internal/usecase/reporting"
+	"github.com/tokopedia/td-report-engine/app/api/http"
+	"github.com/tokopedia/td-report-engine/config"
+	esreportsvc "github.com/tokopedia/td-report-engine/internal/service/es-report"
+	ucreporting "github.com/tokopedia/td-report-engine/internal/usecase/reporting"
 )
 
 func main() {

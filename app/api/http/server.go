@@ -10,8 +10,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/reyhanfahlevi/pkg/go/log"
-	"github.com/tokopedia/reporting-engine/app/api"
-	"github.com/tokopedia/reporting-engine/app/api/http/reporting"
+	"github.com/tokopedia/td-report-engine/app/api"
+	"github.com/tokopedia/td-report-engine/app/api/http/reporting"
 )
 
 // Server struct
