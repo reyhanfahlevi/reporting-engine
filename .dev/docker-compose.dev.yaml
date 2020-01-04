@@ -13,7 +13,7 @@ services:
         - "4321:4321"
     depends_on:
         - elasticsearch
-    command: ["refresh","run","-c",".dev/refresh.yaml"]
+    command: [".dev/wait-for-it.sh","elasticsearch:9200","--timeout=60","--","refresh","run","-c",".dev/refresh.yaml"]
     container_name: td-report-engine
   elasticsearch:
         container_name: elasticsearch
